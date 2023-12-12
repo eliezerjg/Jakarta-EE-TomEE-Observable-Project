@@ -1,7 +1,7 @@
 # Jakarta EE Webservlet With Observability - Tomcat 10
 
 A Boilerplate project for Tomcat 10 Webservlet Project using JSP Pages and observability
-system for Prometheus / Grafana Observability System.
+system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE like Spring !
 
 **Libraries used**
 
@@ -11,6 +11,27 @@ system for Prometheus / Grafana Observability System.
 - Apache Commons
 - Jakarta dependencies
 - Spring ThreadDumpFormatter
+
+## Available Metrics
+```
+  HttpRequestMetrics
+  ClassLoaderMetrics
+  ProcessorMetrics
+  JvmThreadMetrics
+  JvmCompilationMetrics
+  JvmMemoryMetrics
+  JvmGcMetric
+  JvmHeapPressureMetrics
+  JvmInfoMetrics
+  JvmMemoryMetrics
+  DiskSpaceMetrics
+```
+
+## Available Dumps
+```
+  Thread Dump
+  Heap Dump
+```
 
 ## Project Structure
 
