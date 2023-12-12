@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
-@WebFilter(urlPatterns = "/*")
+@WebFilter(urlPatterns = "/*", filterName = "Request Metrics")
 public class RequestMetricsFilter implements Filter {
 
     private final PrometheusRegistry registry = PrometheusRegistry.getInstance();
@@ -23,18 +23,14 @@ public class RequestMetricsFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (!(request instanceof HttpServletRequest)) {
+        if (!(request instanceof HttpServletRequest httpServletRequest)) {
             chain.doFilter(request, response);
             return;
         }
 
         Timer.Sample timer = Timer.start(registry.getPrometheusMeterRegistry());
-        String endpoint = null;
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        String endpoint = httpServletRequest.getRequestURI();
         try {
-
-            endpoint = httpServletRequest.getRequestURI();
-
             Counter.builder("jakarta_http_requests_endpoint")
                     .description("Total number of requests for a specific endpoint")
                     .tag("endpoint", endpoint)

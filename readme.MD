@@ -13,6 +13,7 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 - Spring ThreadDumpFormatter
 
 ## Available Metrics
+
 ```
   HttpRequestMetrics
   ClassLoaderMetrics
@@ -28,10 +29,17 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 ```
 
 ## Available Dumps
+
 ```
   Thread Dump
   Heap Dump
 ```
+
+## Exceptions
+
+- Exception Handler
+- MXBeanNotFoundException
+- DefaultErrorDTO
 
 ## Project Structure
 
@@ -48,7 +56,8 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 
 ## Observability Configuration
 
-This project includes integrations for Prometheus and Grafana to provide observability. Follow these steps to set up the observability system:
+This project includes integrations for Prometheus and Grafana to provide observability. Follow these steps to set up the
+observability system:
 
 1. Install and configure Prometheus on your server.
 2. Set up Grafana and connect it to Prometheus.
@@ -56,7 +65,8 @@ This project includes integrations for Prometheus and Grafana to provide observa
 
 ## Contribution Guidelines
 
-Feel free to contribute by opening issues or submitting pull requests. Your feedback and contributions are highly appreciated!
+Feel free to contribute by opening issues or submitting pull requests. Your feedback and contributions are highly
+appreciated!
 
 ## License
 

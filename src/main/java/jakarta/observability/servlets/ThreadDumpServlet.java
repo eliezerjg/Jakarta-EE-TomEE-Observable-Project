@@ -21,39 +21,35 @@ import jakarta.servlet.http.HttpServletResponse;
 public class ThreadDumpServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         setRespAsTextPlain(resp);
     }
-    
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         setRespAsTextPlain(resp);
     }
 
     private void setRespAsTextPlain(HttpServletResponse resp) throws IOException {
         resp.setContentType("text/plain;charset=UTF-8");
         Writer writer = resp.getWriter();
-        try {
-            PlainTextThreadDumpFormatter plainTextFormatter = new PlainTextThreadDumpFormatter();
-            String formattedDump = getFormattedThreadDump(plainTextFormatter::format);
-            createFileThreadDump(formattedDump);
-            writer.write(formattedDump);
-            writer.flush();
-        } finally {
-            writer.close();
-        }
+        PlainTextThreadDumpFormatter plainTextFormatter = new PlainTextThreadDumpFormatter();
+        String formattedDump = getFormattedThreadDump(plainTextFormatter::format);
+        createFileThreadDump(formattedDump);
+        writer.write(formattedDump);
+        writer.flush();
     }
 
     private <T> T getFormattedThreadDump(Function<ThreadInfo[], T> formatter) {
         return formatter.apply(ManagementFactory.getThreadMXBean().dumpAllThreads(true, true));
     }
-    
+
     private void createFileThreadDump(String formattedString) throws IOException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String todayDate = dateFormat.format(new Date());
-        String fileName = "thread-"+ todayDate + ".txt";
+        String fileName = "thread-" + todayDate + ".txt";
         String filePath = "//" + fileName;
         Path path = Path.of(filePath);
         Files.write(path, formattedString.getBytes());

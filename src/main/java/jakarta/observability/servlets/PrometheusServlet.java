@@ -17,11 +17,11 @@ public class PrometheusServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 			resp.setContentType(TextFormat.CONTENT_TYPE_004);
-
-        try (Writer writer = resp.getWriter()) {
+            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+            Writer writer = resp.getWriter();
             writer.write(registry.getPrometheusMeterRegistry().scrape());
             writer.flush();
-        }
+            writer.close();
 	}
 
 }
