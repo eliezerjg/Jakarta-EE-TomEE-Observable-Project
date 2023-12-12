@@ -16,6 +16,12 @@ import java.util.stream.Stream;
 /* From Spring Actuator */
 public class PlainTextThreadDumpFormatter {
 
+	public PlainTextThreadDumpFormatter(ManagementFactory managementFactory) {
+	}
+
+	public PlainTextThreadDumpFormatter() {
+	}
+
 	public String format(ThreadInfo[] threads) {
 
 		StringWriter dump = new StringWriter();
