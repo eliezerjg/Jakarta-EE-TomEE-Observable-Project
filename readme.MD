@@ -1,3 +1,6 @@
-<h1>Simple project for Jakarta EE 10 Webservlet</h1>
+<h1>Jakarta EE Webservlet With Observability - Tomcat 10</h1>
 
-<p>Yep, just clone, replace and migrate your code, btw yw.</p>
+<p>
+A Boilerplate project for Tomcat 10 Webservlet Project using JSP Pages and observability
+system for Prometheus / Grafana Observability System.
+</p>
