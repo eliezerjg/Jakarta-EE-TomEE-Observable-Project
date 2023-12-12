@@ -35,7 +35,7 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
   Heap Dump
 ```
 
-## Exceptions
+## Error Handling
 
 - Exception Handler
 - MXBeanNotFoundException
