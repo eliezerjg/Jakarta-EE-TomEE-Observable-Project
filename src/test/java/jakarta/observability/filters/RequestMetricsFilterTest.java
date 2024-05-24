@@ -1,6 +1,5 @@
 package jakarta.observability.filters;
 
-import jakarta.observability.prometheus.PrometheusRegistry;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;

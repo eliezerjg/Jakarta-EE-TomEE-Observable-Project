@@ -5,4 +5,5 @@
         <exception-type>java.lang.Exception</exception-type>
         <location>/exceptionHandlerServlet</location>
     </error-page>
+
 </web-app>
