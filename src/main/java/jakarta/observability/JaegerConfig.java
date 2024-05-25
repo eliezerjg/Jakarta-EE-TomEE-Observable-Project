@@ -2,6 +2,7 @@ package jakarta.observability;
 
 import io.jaegertracing.Configuration;
 import io.opentracing.Tracer;
+import io.opentracing.util.GlobalTracer;
 
 public class JaegerConfig {
     private static JaegerConfig instance;
@@ -19,6 +20,9 @@ public class JaegerConfig {
                         )
                 )
                 .getTracer();
+
+        GlobalTracer.register(tracer);
+
     }
 
     public static JaegerConfig getInstance(){
