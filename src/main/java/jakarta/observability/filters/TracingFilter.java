@@ -29,10 +29,11 @@ public class TracingFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         Gson gson = new Gson();
 
-        Span span = tracer.buildSpan("HTTP /" + req.getMethod().toUpperCase() + " " + req.getRequestURI().toUpperCase() + " " + req.getQueryString())
+        Span span = tracer.buildSpan("HTTP /" + req.getMethod().toUpperCase() + " " + req.getRequestURI().toUpperCase() )
                 .withTag("http.method", req.getMethod().toUpperCase() )
                 .withTag("http.user-agent", req.getHeader("User-Agent").replaceAll(" ", "_"))
                 .withTag("http.params", gson.toJson(req.getParameterMap()))
+                .withTag("http.origin", ((HttpServletRequest) request).getHeader("Origin"))
                 .withTag("http.status_code", ((HttpServletResponse) response).getStatus())
                 .withTag("http.x-forwarded-for", req.getHeader("X-Forwarded-For"))
                 .withTag("jakarta.servlet.http.remote.addr", req.getRemoteAddr())
