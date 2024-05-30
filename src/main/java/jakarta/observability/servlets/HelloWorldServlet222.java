@@ -1,8 +1,6 @@
-package jakarta;
+package jakarta.observability.servlets;
 
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,8 +12,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
-@WebServlet("/HelloWorld")
-public class HelloWorldServlet extends HttpServlet {
+import java.io.IOException;
+import java.io.PrintWriter;
+
+@WebServlet("/HelloWorld222")
+public class HelloWorldServlet222 extends HttpServlet {
 
     @Override
     @Operation(summary = "Say hello to the world")
