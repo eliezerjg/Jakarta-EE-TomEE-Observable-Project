@@ -15,7 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/HelloWorld222")
+@WebServlet(urlPatterns = "/HelloWorld222")
 public class HelloWorldServlet222 extends HttpServlet {
 
     @Override
