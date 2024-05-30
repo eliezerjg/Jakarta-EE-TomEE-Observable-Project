@@ -11,6 +11,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,7 +20,8 @@ import java.io.PrintWriter;
 public class HelloWorldServlet222 extends HttpServlet {
 
     @Override
-    @Operation(summary = "Say hello to the world")
+    @Tag(name = "name", description = "description")
+    @Operation(summary = "Say hello to the world", operationId = "operationId")
     @APIResponses(
             value = {
                     @APIResponse(
