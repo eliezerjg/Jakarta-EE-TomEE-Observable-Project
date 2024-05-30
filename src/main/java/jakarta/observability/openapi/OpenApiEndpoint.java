@@ -1,4 +1,4 @@
-package jakarta.observability.servlets;
+package jakarta.observability.openapi;
 
 import io.smallrye.openapi.api.models.PathItemImpl;
 import io.smallrye.openapi.api.models.PathsImpl;
@@ -62,13 +62,17 @@ public class OpenApiEndpoint extends HttpServlet {
                 for (MethodInfo methodInfo : info.methods()) {
                     List<AnnotationInstance> annotations = info.annotations();
                     AnnotationInstance webServletAnnotation = annotations.stream().filter(annotation -> annotation.name().toString().toLowerCase().contains("webservlet")).toList().get(0);
-                    AnnotationValue annotationValue = webServletAnnotation.value("urlPatterns");
 
+                    AnnotationValue annotationValue = webServletAnnotation.value("urlPatterns");
                     String path = extractFromAnnotationValue(annotationValue);
+
                     PathItemImpl pathItem = new PathItemImpl();
+
                     openApi.getPaths().addPathItem(path + "/" + methodInfo.name(), pathItem);
 
+
                     Operation operation = getOperationFromAnnotations(methodInfo);
+                    operation.addTag(classInfo.simpleName());
 
                     // To-do: aqui tem que ir o scan eo metodo com reflection por getParameter e setAttribute
                     //operation.setRequestBody(new RequestBodyImpl().content(new ContentImpl()));
