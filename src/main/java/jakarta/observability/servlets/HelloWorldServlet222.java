@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @WebServlet(urlPatterns = "/HelloWorld222")
+@Tag(name = "HelloWorldServlet222", description = "HelloWorldServlet222")
 public class HelloWorldServlet222 extends HttpServlet {
 
     @Override
-    @Tag(name = "name", description = "description")
     @Operation(summary = "Say hello to the world", operationId = "operationId")
     @APIResponses(
             value = {
