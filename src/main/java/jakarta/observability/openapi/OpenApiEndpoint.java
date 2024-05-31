@@ -5,12 +5,8 @@ import io.smallrye.openapi.api.models.PathsImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
 import io.smallrye.openapi.api.models.info.InfoImpl;
 import io.smallrye.openapi.api.models.info.LicenseImpl;
-import io.smallrye.openapi.api.models.media.ContentImpl;
-import io.smallrye.openapi.api.models.parameters.RequestBodyImpl;
 import io.smallrye.openapi.runtime.io.Format;
 import io.smallrye.openapi.runtime.io.OpenApiSerializer;
-import jakarta.observability.openapi.CustomIndexView;
-import jakarta.observability.openapi.SwaggerOpenAPImpl;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -76,6 +72,7 @@ public class OpenApiEndpoint extends HttpServlet {
 
                     // To-do: aqui tem que ir o scan eo metodo com reflection por getParameter e setAttribute
                     //operation.setRequestBody(new RequestBodyImpl().content(new ContentImpl()));
+
 
                     pathItem.setGET(operation);
 

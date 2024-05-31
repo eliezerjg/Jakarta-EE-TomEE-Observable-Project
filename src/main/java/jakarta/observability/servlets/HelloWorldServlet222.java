@@ -1,12 +1,12 @@
 package jakarta.observability.servlets;
 
 
+import jakarta.observability.dto.DefaultErrorDTO;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -25,10 +25,10 @@ public class HelloWorldServlet222 extends HttpServlet {
     @APIResponses(
             value = {
                     @APIResponse(
-                            responseCode = "200",
-                            description = "Successful operation",
-                            content = @Content(mediaType = "text/plain",
-                                    schema = @Schema(type = SchemaType.STRING))
+                                    responseCode = "200",
+                                    description = "Successful operation",
+                                    content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = DefaultErrorDTO.class))
                     )
             }
     )
@@ -36,6 +36,7 @@ public class HelloWorldServlet222 extends HttpServlet {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
         writer.println("Hello: Testing metrics endpoint");
+        String x = req.getParameter("x");
         writer.close();
     }
 

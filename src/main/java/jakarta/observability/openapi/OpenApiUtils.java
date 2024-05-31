@@ -1,9 +1,15 @@
 package jakarta.observability.openapi;
 
 import io.smallrye.openapi.api.models.OperationImpl;
+import io.smallrye.openapi.api.models.examples.ExampleImpl;
+import io.smallrye.openapi.api.models.media.ContentImpl;
+import io.smallrye.openapi.api.models.media.MediaTypeImpl;
+import io.smallrye.openapi.api.models.media.SchemaImpl;
 import io.smallrye.openapi.api.models.responses.APIResponseImpl;
 import io.smallrye.openapi.api.models.responses.APIResponsesImpl;
 import org.eclipse.microprofile.openapi.models.Operation;
+import org.eclipse.microprofile.openapi.models.examples.Example;
+import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.responses.APIResponse;
 import org.eclipse.microprofile.openapi.models.responses.APIResponses;
 import org.jboss.jandex.AnnotationInstance;
@@ -74,8 +80,28 @@ public class OpenApiUtils {
                         APIResponse apiResponse = new APIResponseImpl();
                         AnnotationValue responseCode = response.value("responseCode");
                         AnnotationValue responseDescription = response.value("description");
+                        AnnotationValue content = response.value("content");
                         apiResponse.setDescription(responseDescription.asString());
-                        apiResponses.addAPIResponse(responseCode.asString() , apiResponse);
+                        if (content != null) {
+                                    // To-DO: finish this implementation getting by the content
+
+
+                                    ContentImpl contentImpl = new ContentImpl();
+                                    SchemaImpl schemaImpl = new SchemaImpl();
+                                    schemaImpl.setType(Schema.SchemaType.OBJECT);
+
+                                    // for examples each ref should have a component example
+                                    schemaImpl.setRef("");
+
+                                    Example example = new ExampleImpl().description("descricao").value("{'x' : 'y'}").summary("summary").externalValue("external");
+                                    contentImpl.addMediaType("application/json", new MediaTypeImpl().schema(schemaImpl).addExample("1", example) );
+
+
+                            apiResponse.setContent(contentImpl);
+                        }
+
+                        apiResponses.addAPIResponse(responseCode.asString(), apiResponse);
+
                     }
                     operation.setResponses(apiResponses);
                 }
