@@ -72,9 +72,34 @@ public class OpenApiEndpoint extends HttpServlet {
 
                     // To-do: aqui tem que ir o scan eo metodo com reflection por getParameter e setAttribute
                     //operation.setRequestBody(new RequestBodyImpl().content(new ContentImpl()));
+                    String methodName = methodInfo.name().toLowerCase().replaceFirst(".*/", "");
+                    switch (methodName){
+                        case "dopost":
+                            pathItem.setPOST(operation);
+                            break;
+                        case "doput":
+                            pathItem.setPUT(operation);
+                            break;
+                        case "dodelete":
+                            pathItem.setDELETE(operation);
+                            break;
+                        case "dohead":
+                            pathItem.setHEAD(operation);
+                            break;
+                        case "dooptions":
+                            pathItem.setOPTIONS(operation);
+                            break;
+                        case "dopatch":
+                            pathItem.setPATCH(operation);
+                            break;
+                        case "dotrace":
+                            pathItem.setTRACE(operation);
+                            break;
+                        default:
+                            pathItem.setGET(operation);
+                            break;
+                    }
 
-
-                    pathItem.setGET(operation);
 
 
                 }

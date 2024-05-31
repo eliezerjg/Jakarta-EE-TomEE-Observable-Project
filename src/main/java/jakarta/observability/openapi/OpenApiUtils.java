@@ -18,6 +18,7 @@ import org.jboss.jandex.MethodInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class OpenApiUtils {
     public static String extractFromAnnotationValue(AnnotationValue annotationValue){
@@ -91,7 +92,7 @@ public class OpenApiUtils {
                                     schemaImpl.setType(Schema.SchemaType.OBJECT);
 
                                     // for examples each ref should have a component example
-                                    schemaImpl.setRef("");
+                                    schemaImpl.setRef(UUID.randomUUID().toString());
 
                                     Example example = new ExampleImpl().description("descricao").value("{'x' : 'y'}").summary("summary").externalValue("external");
                                     contentImpl.addMediaType("application/json", new MediaTypeImpl().schema(schemaImpl).addExample("1", example) );
