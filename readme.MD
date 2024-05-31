@@ -9,7 +9,7 @@ A Boilerplate project for Tomcat 10 Webservlet Project using JSP Pages and obser
 system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE like Spring !
 
 # Open API Implementation for Jakarta EE WebServlets
-+ In progress implementation for Jakarta EE
++ In progress implementation for Jakarta EE, see in http://localhost:8080/openapi
 
 
 # Jaeger Tracing and Tracing Metrics 
