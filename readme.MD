@@ -24,6 +24,9 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 - Apache Commons
 - Jakarta dependencies
 - Spring ThreadDumpFormatter
+- FernFlower Decompiler
+- Eclipse microprofile
+- Smallrye Open Api Core
 
 ## Available Metrics
 
