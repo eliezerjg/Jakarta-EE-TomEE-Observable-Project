@@ -1,24 +1,18 @@
 package jakarta.observability.openapi;
 
+import com.google.gson.Gson;
 import io.smallrye.openapi.api.models.OperationImpl;
-import io.smallrye.openapi.api.models.examples.ExampleImpl;
-import io.smallrye.openapi.api.models.media.ContentImpl;
-import io.smallrye.openapi.api.models.media.MediaTypeImpl;
-import io.smallrye.openapi.api.models.media.SchemaImpl;
 import io.smallrye.openapi.api.models.responses.APIResponseImpl;
 import io.smallrye.openapi.api.models.responses.APIResponsesImpl;
 import org.eclipse.microprofile.openapi.models.Operation;
-import org.eclipse.microprofile.openapi.models.examples.Example;
-import org.eclipse.microprofile.openapi.models.media.Schema;
 import org.eclipse.microprofile.openapi.models.responses.APIResponse;
 import org.eclipse.microprofile.openapi.models.responses.APIResponses;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.MethodInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class OpenApiUtils {
     public static String extractFromAnnotationValue(AnnotationValue annotationValue){
@@ -78,28 +72,35 @@ public class OpenApiUtils {
                 if (responses != null) {
                     APIResponses apiResponses = new APIResponsesImpl();
                     for (AnnotationInstance response : responses.asNestedArray()) {
-                        APIResponse apiResponse = new APIResponseImpl();
+                        OpenApiResponse apiResponse = new OpenApiResponse();
                         AnnotationValue responseCode = response.value("responseCode");
                         AnnotationValue responseDescription = response.value("description");
                         AnnotationValue content = response.value("content");
-                        apiResponse.setDescription(responseDescription.asString());
+                        apiResponse.setDescription("description");
+
+                        List<AnnotationInstance> valuesFromAnnotation = Arrays.stream(content.asNestedArray()).toList();
+                        AnnotationInstance valueFromParent = valuesFromAnnotation.get(0);
+                        String schemaFromAnnotation = valueFromParent.value("schema").asString();
                         if (content != null) {
-                                    // To-DO: finish this implementation getting by the content
+                            String jsonObject = null;
+                            if(schemaFromAnnotation.contains("implementation")) {
+                                String packageName = schemaFromAnnotation.split("=")[1].trim().replaceAll("\\ ", "").replaceAll("\\)", "");
 
+                                try {
+                                    Class<?> clazz = Class.forName(packageName);
+                                    Object instance = clazz.getDeclaredConstructor().newInstance();
+                                    jsonObject = new Gson().toJson(instance);
+                                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                                    System.out.println("Não foi possivel instanciar: " + e.getMessage());
+                                }
+                            }
 
-                                    ContentImpl contentImpl = new ContentImpl();
-                                    SchemaImpl schemaImpl = new SchemaImpl();
-                                    schemaImpl.setType(Schema.SchemaType.OBJECT);
+                            jsonObject = jsonObject == null ? schemaFromAnnotation : jsonObject;
 
-                                    // for examples each ref should have a component example
-                                    schemaImpl.setRef(UUID.randomUUID().toString());
-
-                                    Example example = new ExampleImpl().description("descricao").value("{'x' : 'y'}").summary("summary").externalValue("external");
-                                    contentImpl.addMediaType("application/json", new MediaTypeImpl().schema(schemaImpl).addExample("1", example) );
-
-
-                            apiResponse.setContent(contentImpl);
+                            apiResponse.setSchema("example", "method return Type: " + methodInfo.returnType() +  " ***  DTO FROM SCHEMA ANNOTATION *** -> " + jsonObject);
                         }
+
+
 
                         apiResponses.addAPIResponse(responseCode.asString(), apiResponse);
 

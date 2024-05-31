@@ -1,7 +1,10 @@
 package jakarta.observability.openapi;
 
+import com.google.gson.Gson;
+import io.smallrye.openapi.api.models.ComponentsImpl;
 import io.smallrye.openapi.api.models.PathItemImpl;
 import io.smallrye.openapi.api.models.PathsImpl;
+import io.smallrye.openapi.api.models.examples.ExampleImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
 import io.smallrye.openapi.api.models.info.InfoImpl;
 import io.smallrye.openapi.api.models.info.LicenseImpl;
@@ -18,6 +21,7 @@ import org.jboss.jandex.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import static jakarta.observability.openapi.OpenApiUtils.extractFromAnnotationValue;
 import static jakarta.observability.openapi.OpenApiUtils.getOperationFromAnnotations;
@@ -64,7 +68,28 @@ public class OpenApiEndpoint extends HttpServlet {
 
                     PathItemImpl pathItem = new PathItemImpl();
 
-                    openApi.getPaths().addPathItem(path + "/" + methodInfo.name(), pathItem);
+                    String originalMethodName = methodInfo.name().replaceFirst(".*/", "");
+
+                    // should replace known words for init and http methods
+                    String[] reservedNames = new String[]{"doGet", "doPost", "doDelete", "doTrace", "doPut", "doHead", "doPatch", "<init>", "<clinit>"};
+
+                    String finalMethodName = originalMethodName;
+                    for (String reservedName : reservedNames) {
+                        finalMethodName = finalMethodName.replaceAll(reservedName, "");
+                    }
+
+                    String finalPath = path + "/" + finalMethodName;
+                    if (openApi.getPaths().hasPathItem(finalPath)) {
+                        finalPath = path + "/" + finalMethodName;
+
+                        while (openApi.getPaths().hasPathItem(finalPath)) {
+                            finalPath += ".";
+                        }
+                    }
+                    openApi.getPaths().addPathItem(finalPath, pathItem);
+
+
+
 
 
                     Operation operation = getOperationFromAnnotations(methodInfo);
@@ -72,31 +97,31 @@ public class OpenApiEndpoint extends HttpServlet {
 
                     // To-do: aqui tem que ir o scan eo metodo com reflection por getParameter e setAttribute
                     //operation.setRequestBody(new RequestBodyImpl().content(new ContentImpl()));
-                    String methodName = methodInfo.name().toLowerCase().replaceFirst(".*/", "");
-                    switch (methodName){
-                        case "dopost":
+
+                    switch (originalMethodName){
+                        case "doGet":
+                            pathItem.setGET(operation);
+                            break;
+                        case "doPost":
                             pathItem.setPOST(operation);
                             break;
-                        case "doput":
+                        case "doPut":
                             pathItem.setPUT(operation);
                             break;
-                        case "dodelete":
+                        case "doDelete":
                             pathItem.setDELETE(operation);
                             break;
-                        case "dohead":
+                        case "doHead":
                             pathItem.setHEAD(operation);
                             break;
-                        case "dooptions":
+                        case "doOptions":
                             pathItem.setOPTIONS(operation);
                             break;
-                        case "dopatch":
+                        case "doPatch":
                             pathItem.setPATCH(operation);
                             break;
-                        case "dotrace":
+                        case "doTrace":
                             pathItem.setTRACE(operation);
-                            break;
-                        default:
-                            pathItem.setGET(operation);
                             break;
                     }
 
@@ -107,7 +132,7 @@ public class OpenApiEndpoint extends HttpServlet {
             }
         }
 
-        String openApiYaml = "swagger: \"" + openApi.swagger + "\"" + OpenApiSerializer.serialize(openApi, Format.YAML).replace("---","");
+        String openApiYaml = new Gson().toJson(openApi);
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         resp.getWriter().print(openApiYaml);
