@@ -76,7 +76,7 @@ public class OpenApiUtils {
                         AnnotationValue responseCode = response.value("responseCode");
                         AnnotationValue responseDescription = response.value("description");
                         AnnotationValue content = response.value("content");
-                        apiResponse.setDescription("description");
+                        apiResponse.setDescription(responseDescription.asString());
 
                         List<AnnotationInstance> valuesFromAnnotation = Arrays.stream(content.asNestedArray()).toList();
                         AnnotationInstance valueFromParent = valuesFromAnnotation.get(0);

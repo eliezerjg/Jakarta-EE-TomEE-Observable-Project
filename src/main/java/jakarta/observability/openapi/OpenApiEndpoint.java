@@ -1,21 +1,21 @@
 package jakarta.observability.openapi;
 
 import com.google.gson.Gson;
-import io.smallrye.openapi.api.models.ComponentsImpl;
 import io.smallrye.openapi.api.models.PathItemImpl;
 import io.smallrye.openapi.api.models.PathsImpl;
-import io.smallrye.openapi.api.models.examples.ExampleImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
 import io.smallrye.openapi.api.models.info.InfoImpl;
 import io.smallrye.openapi.api.models.info.LicenseImpl;
-import io.smallrye.openapi.runtime.io.Format;
-import io.smallrye.openapi.runtime.io.OpenApiSerializer;
+import io.smallrye.openapi.api.models.media.ContentImpl;
+import io.smallrye.openapi.api.models.parameters.ParameterImpl;
+import io.smallrye.openapi.api.models.parameters.RequestBodyImpl;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.models.Operation;
+import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.jboss.jandex.*;
 
 import java.io.IOException;
@@ -70,33 +70,25 @@ public class OpenApiEndpoint extends HttpServlet {
 
                     String originalMethodName = methodInfo.name().replaceFirst(".*/", "");
 
-                    // should replace known words for init and http methods
-                    String[] reservedNames = new String[]{"doGet", "doPost", "doDelete", "doTrace", "doPut", "doHead", "doPatch", "<init>", "<clinit>"};
 
-                    String finalMethodName = originalMethodName;
-                    for (String reservedName : reservedNames) {
-                        finalMethodName = finalMethodName.replaceAll(reservedName, "");
-                    }
-
-                    String finalPath = path + "/" + finalMethodName;
-                    if (openApi.getPaths().hasPathItem(finalPath)) {
-                        finalPath = path + "/" + finalMethodName;
-
-                        while (openApi.getPaths().hasPathItem(finalPath)) {
-                            finalPath += ".";
-                        }
-                    }
-                    openApi.getPaths().addPathItem(finalPath, pathItem);
-
-
-
-
-
+                    openApi.getPaths().addPathItem(path + "/" + originalMethodName, pathItem);
                     Operation operation = getOperationFromAnnotations(methodInfo);
-                    operation.addTag(classInfo.simpleName());
 
-                    // To-do: aqui tem que ir o scan eo metodo com reflection por getParameter e setAttribute
-                    //operation.setRequestBody(new RequestBodyImpl().content(new ContentImpl()));
+
+                    // ****** DO IMPLEMENTATION BY REFLECTION HERE  FOR PARAMETERS ****
+                    // se for por parameters
+                    OpenApiParameter param = new OpenApiParameter("string");
+                    param.setName("name");
+                    param.setIn(OpenApiParameter.In.QUERY);
+
+                    operation.setParameters(List.of(param));
+
+                    // se for por request body
+                    //operation.setRequestBody();
+
+                    // ****** DO IMPLEMENTATION BY REFLECTION HERE  FOR PARAMETERS ****
+
+                    operation.addTag(classInfo.simpleName());
 
                     switch (originalMethodName){
                         case "doGet":
@@ -123,18 +115,26 @@ public class OpenApiEndpoint extends HttpServlet {
                         case "doTrace":
                             pathItem.setTRACE(operation);
                             break;
+                        default:
+                            pathItem.setGET(operation);
+                            break;
                     }
-
-
 
                 }
 
             }
         }
 
-        String openApiYaml = new Gson().toJson(openApi);
+        String openApiJson = new Gson().toJson(openApi);
+
+        // fixing types in Uppercase (POO PROBLEM)
+        String[] typesInUppercase = new String[] { "QUERY", "BODY", "PATH", "HEADER", "FORMDATA"};
+        for(String type : typesInUppercase){
+            openApiJson = openApiJson.replaceAll(type, type.toLowerCase());
+        }
+
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().print(openApiYaml);
+        resp.getWriter().print(openApiJson);
     }
 }
