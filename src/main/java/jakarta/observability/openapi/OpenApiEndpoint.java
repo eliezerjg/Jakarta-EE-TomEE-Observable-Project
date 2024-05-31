@@ -43,7 +43,7 @@ public class OpenApiEndpoint extends HttpServlet {
         openApi.setInfo(new InfoImpl()
                 .title("API de Observabilidade")
                 .version("1.0.0")
-                .description("Documentação da API de Observabilidade")
+                .description("Documentação da API de Observabilidade Operações nativas CRUD doGet, doPost e etc estão nos nomes dos paths favor ignorar Os retornos dos metodos e das annotations estão nas responses As requests são mapeadas apartir do getParameter e as saidas o setAttribute.")
                 .contact(new ContactImpl()
                         .name("Support")
                         .email("suporte@exemplo.com"))
@@ -70,9 +70,14 @@ public class OpenApiEndpoint extends HttpServlet {
 
                     String originalMethodName = methodInfo.name().replaceFirst(".*/", "");
 
+                    // ignore super methods for init
+                    if(originalMethodName.contains("init")){
+                        continue;
+                    }
 
                     openApi.getPaths().addPathItem(path + "/" + originalMethodName, pathItem);
                     Operation operation = getOperationFromAnnotations(methodInfo);
+
 
 
                     // ****** DO IMPLEMENTATION BY REFLECTION HERE  FOR PARAMETERS ****
