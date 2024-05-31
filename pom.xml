@@ -128,26 +128,12 @@
             <version>3.10.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.jetbrains/intellij-fernflower -->
+        <!-- https://mvnrepository.com/artifact/org.benf/cfr -->
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>intellij-fernflower</artifactId>
-            <version>1.2.1.16</version>
-            <scope>runtime</scope>
+            <groupId>org.benf</groupId>
+            <artifactId>cfr</artifactId>
+            <version>0.152</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.jetbrains.intellij.java/java-decompiler-engine -->
-        <dependency>
-            <groupId>com.jetbrains.intellij.java</groupId>
-            <artifactId>java-decompiler-engine</artifactId>
-            <version>241.15989.150</version>
-        </dependency>
-
-
-
-
-
-
 
     </dependencies>
 
@@ -168,17 +154,6 @@
     </build>
 
 
-    <repositories>
-        <repository>
-            <id>fabricmc</id>
-            <url>https://maven.fabricmc.net/</url>
-        </repository>
-        <repository>
-            <id>intellij-repository</id>
-            <url>https://www.jetbrains.com/intellij-repository/releases/</url>
-        </repository>
 
-
-    </repositories>
 
 </project>

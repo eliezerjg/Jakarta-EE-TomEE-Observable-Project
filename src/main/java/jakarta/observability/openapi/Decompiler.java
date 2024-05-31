@@ -1,136 +1,54 @@
 package jakarta.observability.openapi;
 
-import org.jetbrains.java.decompiler.main.Fernflower;
-import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
-import org.jetbrains.java.decompiler.main.extern.IFernflowerLogger;
-import org.jetbrains.java.decompiler.main.extern.IResultSaver;
-import org.jetbrains.java.decompiler.util.InterpreterUtil;
+import org.benf.cfr.reader.api.CfrDriver;
+import org.benf.cfr.reader.api.OutputSinkFactory;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
-public class Decompiler implements IBytecodeProvider, IResultSaver {
-    private final File tempDir;
-    private final Fernflower engine;
-    private final Map<String, ZipOutputStream> mapArchiveStreams = new HashMap<>();
-    private final Map<String, Set<String>> mapArchiveEntries = new HashMap<>();
-
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: java Decompiler <package>");
-            return;
-        }
-
-        String pacote= "";
-
-        String packagePath = pacote.replace(".", File.separator);
-
-        try {
-            File tempDir = createTempDir();
-            Decompiler decompiler = new Decompiler(tempDir, null, null);
-            decompiler.addSource(new File(packagePath));
-            decompiler.decompileContext();
-
-            System.out.println("Decompilation completed. Output directory: " + tempDir.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+public class Decompiler {
+    public static void main(String[] args) throws Exception {
+        String classFilePath = "path/to/YourClass.class";
+        String decompiledCode = decompileClassFile(classFilePath);
+        System.out.println(decompiledCode);
     }
 
-    public Decompiler(File tempDir, Map<String, Object> options, IFernflowerLogger logger) {
-        this.tempDir = tempDir;
-        this.engine = new Fernflower(this, this, options, logger);
-    }
+    public static String decompileClassFile(String classFilePath) throws Exception {
+        Path path = Paths.get(classFilePath);
+        byte[] classBytes = Files.readAllBytes(path);
 
-    public void addSource(File source) {
-        this.engine.addSource(source);
-    }
+        StringBuilder sb = new StringBuilder();
 
-    public void decompileContext() {
-        try {
-            this.engine.decompileContext();
-        } finally {
-            this.engine.clearContext();
-        }
-    }
+        Map<String, String> options = new HashMap<>();
+        options.put("outputdir", "none");
 
-    @Override
-    public byte[] getBytecode(String externalPath, String internalPath) throws IOException {
-        File file = new File(externalPath);
-        if (internalPath == null) {
-            return InterpreterUtil.getBytes(file);
-        } else {
-            try (ZipFile archive = new ZipFile(file)) {
-                ZipEntry entry = archive.getEntry(internalPath);
-                if (entry == null) {
-                    throw new IOException("Entry not found: " + internalPath);
-                }
-                return InterpreterUtil.getBytes(archive, entry);
-            }
-        }
-    }
+        CfrDriver driver = new CfrDriver.Builder()
+                .withOptions(options)
+                .withOutputSink(new OutputSinkFactory() {
 
-    private String getAbsolutePath(String path) {
-        return new File(this.tempDir, path).getAbsolutePath();
-    }
+                    @Override
+                    public List<SinkClass> getSupportedSinks(SinkType sinkType, Collection<SinkClass> collection) {
+                        return null;
+                    }
 
-    @Override
-    public void saveFolder(String path) {
-        File dir = new File(getAbsolutePath(path));
-        if (!dir.mkdirs() && !dir.isDirectory()) {
-            throw new RuntimeException("Cannot create directory " + dir);
-        }
-    }
+                    @Override
+                    public <T> Sink<T> getSink(SinkType sinkType, SinkClass sinkClass) {
+                        return (Sink<T>) new Sink<String>() {
+                            @Override
+                            public void write(String s) {
 
-    @Override
-    public void copyFile(String source, String path, String entryName) {
-        try {
-            InterpreterUtil.copyFile(new File(source), new File(getAbsolutePath(path), entryName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+                            }
 
-    @Override
-    public void saveClassFile(String path, String qualifiedName, String entryName, String content, int[] mapping) {
-        File file = new File(getAbsolutePath(path), entryName);
-        try (Writer out = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
-            out.write(content);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    @Override
-    public void createArchive(String s, String s1, Manifest manifest) {}
+                        };
+                    }
+                })
+                .build();
 
-    @Override
-    public void saveDirEntry(String s, String s1, String s2) {}
+        driver.analyse(Collections.singletonList(classFilePath));
 
-    @Override
-    public void copyEntry(String s, String s1, String s2, String s3) {}
-
-    @Override
-    public void saveClassEntry(String s, String s1, String s2, String s3, String s4) {}
-
-    @Override
-    public void closeArchive(String s, String s1) {}
-
-    private static File createTempDir() throws IOException {
-        File tempDir = File.createTempFile("temp", Long.toString(System.nanoTime()));
-        if (!tempDir.delete()) {
-            throw new IOException("Could not delete temp file: " + tempDir.getAbsolutePath());
-        }
-        if (!tempDir.mkdirs()) {
-            throw new IOException("Could not create temp directory: " + tempDir.getAbsolutePath());
-        }
-        return tempDir;
+        return sb.toString();
     }
 }
