@@ -7,6 +7,7 @@ import io.opentracing.util.GlobalTracer;
 import jakarta.observability.JaegerConfig;
 import jakarta.observability.dto.DefaultErrorDTO;
 import jakarta.observability.exceptions.MXBeanNotFoundException;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,11 @@ public class ExceptionHandlerServlet extends HttpServlet {
         gson = new Gson();
         tracer = JaegerConfig.getInstance().getTracer();
         GlobalTracer.registerIfAbsent(tracer);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        super.doDelete(req, resp);
     }
 
     @Override
