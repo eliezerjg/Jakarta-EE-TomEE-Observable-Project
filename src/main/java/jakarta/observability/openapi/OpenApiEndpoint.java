@@ -6,9 +6,6 @@ import io.smallrye.openapi.api.models.PathsImpl;
 import io.smallrye.openapi.api.models.info.ContactImpl;
 import io.smallrye.openapi.api.models.info.InfoImpl;
 import io.smallrye.openapi.api.models.info.LicenseImpl;
-import io.smallrye.openapi.api.models.media.ContentImpl;
-import io.smallrye.openapi.api.models.parameters.ParameterImpl;
-import io.smallrye.openapi.api.models.parameters.RequestBodyImpl;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +16,7 @@ import org.eclipse.microprofile.openapi.models.parameters.Parameter;
 import org.jboss.jandex.*;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static jakarta.observability.openapi.OpenApiUtils.extractFromAnnotationValue;
 import static jakarta.observability.openapi.OpenApiUtils.getOperationFromAnnotations;
@@ -79,20 +74,22 @@ public class OpenApiEndpoint extends HttpServlet {
                     Operation operation = getOperationFromAnnotations(methodInfo);
 
 
+                    Map<String, String> parameterAndAttributeCalls = CfrDecompilerUtils.getParameterAndAttributeCalls(fullClassNameWithPackage, methodInfo.name());
 
-                    // ****** DO IMPLEMENTATION BY REFLECTION HERE  FOR PARAMETERS ****
-                    // se for por parameters
-                    OpenApiParameter param = new OpenApiParameter("string");
-                    param.setName("name");
-                    param.setIn(OpenApiParameter.In.QUERY);
+                    List<Parameter> parameters = new ArrayList<>();
+                    if (parameterAndAttributeCalls != null) {
+                        parameterAndAttributeCalls.forEach((k, v) -> {
+                            if (k.contains("getParameter")) {
+                                OpenApiParameter param = new OpenApiParameter("string");
+                                String paramName = v.replace("getParameter", "").replace("\"", "").trim();
+                                param.setName(paramName);
+                                param.setIn(OpenApiParameter.In.QUERY);
+                                parameters.add(param);
+                            }
+                        });
+                    }
 
-                    operation.setParameters(List.of(param));
-
-                    // se for por request body
-                    //operation.setRequestBody();
-
-                    // ****** DO IMPLEMENTATION BY REFLECTION HERE  FOR PARAMETERS ****
-
+                    operation.setParameters(parameters);
                     operation.addTag(classInfo.simpleName());
 
                     switch (originalMethodName){

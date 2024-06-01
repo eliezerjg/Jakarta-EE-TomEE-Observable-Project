@@ -71,19 +71,25 @@ public class CfrDecompilerUtils {
         return methods;
     }
 
-    public static Map<String, String> getParameterAndAttributeCalls(String packageName, String methodName) throws Exception {
-        Map<String, String> methodInfo = getMethodByName(packageName, methodName);
-        Map<String, String> parameterAndAttributeCalls = new HashMap<>();
+    public static Map<String, String> getParameterAndAttributeCalls(String packageName, String methodName)  {
+        Map<String, String> methodInfo = null;
+        try {
+            methodInfo = getMethodByName(packageName, methodName);
+            Map<String, String> parameterAndAttributeCalls = new HashMap<>();
 
-        for (String method : methodInfo.values()) {
-            String parameterCalls = findCalls(method, "getParameter");
-            String attributeCalls = findCalls(method, "setAttribute");
+            for (String method : methodInfo.values()) {
+                String parameterCalls = findCalls(method, "getParameter");
+                String attributeCalls = findCalls(method, "setAttribute");
 
-            parameterAndAttributeCalls.put("getParameter", parameterCalls);
-            parameterAndAttributeCalls.put("setAttribute", attributeCalls);
+                parameterAndAttributeCalls.put("getParameter", parameterCalls);
+                parameterAndAttributeCalls.put("setAttribute", attributeCalls);
+            }
+
+            return parameterAndAttributeCalls;
+        } catch (Exception e) {
+            return null;
         }
 
-        return parameterAndAttributeCalls;
     }
 
     private static String findCalls(String methodBody, String methodName) {
