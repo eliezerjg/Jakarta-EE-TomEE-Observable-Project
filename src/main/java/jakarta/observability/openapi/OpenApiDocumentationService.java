@@ -48,7 +48,6 @@ public class OpenApiDocumentationService {
         for (ClassInfo classInfo : classes) {
             String fullClassNameWithPackage = classInfo.name().toString();
 
-
             for (MethodInfo methodInfo : classInfo.methods()) {
 
                 String methodName = methodInfo.name();

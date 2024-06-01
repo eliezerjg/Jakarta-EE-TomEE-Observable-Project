@@ -5,7 +5,7 @@ Coffee is good and i like it, if i helped you by some way:<br/><br/>
 
 # Jakarta EE Webservlet With Observability - Tomcat 10
 
-A Boilerplate project for Tomcat 10 Webservlet Project using JSP Pages and observability
+A Boilerplate project for TomcatEE (Never Version of tomcat With CDI) Webservlet Project using JSP Pages and observability
 system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE like Spring !
 
 # Open API Implementation for Jakarta EE WebServlets
@@ -22,7 +22,7 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 - Prometheus
 - Gson
 - Apache Commons
-- Jakarta dependencies
+- Jakarta Apache tomEE dependencies
 - Spring ThreadDumpFormatter
 - FernFlower Decompiler
 - Eclipse microprofile
