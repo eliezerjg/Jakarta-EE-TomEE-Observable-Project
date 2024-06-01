@@ -22,6 +22,15 @@ public class HeapDumpServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        // test for openAPI:
+        String z = req.getParameter("param1");
+        req.getParameter("param2");
+        req.getParameter("param3");
+        req.getParameter("param4");
+        req.setAttribute("x1", "y");
+        req.setAttribute("x2", "y");
+        req.setAttribute("x3", "y");
+
         resp.setContentType("text/plain;charset=UTF-8");
         resp.setStatus(HttpServletResponse.SC_CREATED);
         Writer writer = resp.getWriter();

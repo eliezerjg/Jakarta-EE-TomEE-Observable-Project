@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>jakarta-ee9-webservlet-with-observability</groupId>
-    <artifactId>jakarta-ee9-webservlet-with-observability</artifactId>
+    <groupId>jakarta-ee-webservlet-with-observability</groupId>
+    <artifactId>jakarta-ee-webservlet-with-observability</artifactId>
     <version>1</version>
     <packaging>war</packaging>
     <properties>
