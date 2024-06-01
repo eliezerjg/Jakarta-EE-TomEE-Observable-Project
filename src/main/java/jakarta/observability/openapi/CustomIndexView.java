@@ -159,10 +159,12 @@ public class CustomIndexView implements IndexView {
     }
 
 
-    public static CustomIndexView fromPackage(String packageName, ClassLoader classLoader) throws IOException {
+    public static CustomIndexView fromPackage(ClassLoader classLoader, String... packageNames) throws IOException {
         Indexer indexer = new Indexer();
-        for (Class<?> clazz : getClassesInPackage(packageName, classLoader)) {
-            indexer.index(clazz.getResourceAsStream("/" + clazz.getName().replace('.', '/') + ".class"));
+        for(String packageName : packageNames){
+            for (Class<?> clazz : getClassesInPackage(packageName, classLoader)) {
+                indexer.index(clazz.getResourceAsStream("/" + clazz.getName().replace('.', '/') + ".class"));
+            }
         }
         return new CustomIndexView(indexer.complete());
     }

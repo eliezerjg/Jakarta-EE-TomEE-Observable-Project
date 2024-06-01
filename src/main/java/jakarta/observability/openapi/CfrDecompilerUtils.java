@@ -106,21 +106,4 @@ public class CfrDecompilerUtils {
         return calls.toString();
     }
 
-    public static void main(String[] args) {
-        try {
-            String packageName = "jakarta.observability.servlets.HeapDumpServlet";
-            String methodName = "doGet";
-
-            Map<String, String> parameterAndAttributeCalls = getParameterAndAttributeCalls(packageName, methodName);
-
-            System.out.println("Chamadas de getParameter:");
-            System.out.println(parameterAndAttributeCalls.get("getParameter"));
-
-            System.out.println("\nChamadas de setAttribute:");
-            System.out.println(parameterAndAttributeCalls.get("setAttribute"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

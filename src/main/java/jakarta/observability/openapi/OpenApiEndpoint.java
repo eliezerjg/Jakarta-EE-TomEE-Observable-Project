@@ -28,13 +28,12 @@ public class OpenApiEndpoint extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String packageBase = "jakarta.observability.servlets";
-        IndexView idxView = CustomIndexView.fromPackage(packageBase, getClass().getClassLoader());
+        String[] packages = new String[]{"jakarta.observability.servlets", "jakarta.observability.openapi"};
+        IndexView idxView = CustomIndexView.fromPackage(getClass().getClassLoader(), packages);
 
         SwaggerOpenAPImpl openApi = new SwaggerOpenAPImpl("2.0");
         openApi.setPaths(new PathsImpl());
 
-        // to-do: read this from application properties
         openApi.setInfo(new InfoImpl()
                 .title("API de Observabilidade")
                 .version("1.0.0")
@@ -49,7 +48,7 @@ public class OpenApiEndpoint extends HttpServlet {
         Collection<ClassInfo> classes = idxView.getKnownClasses();
         for (ClassInfo classInfo : classes) {
             String fullClassNameWithPackage = classInfo.name().toString();
-            if (fullClassNameWithPackage.startsWith(packageBase)) {
+
 
                 ClassInfo info = idxView.getClassByName(fullClassNameWithPackage);
 
@@ -65,7 +64,6 @@ public class OpenApiEndpoint extends HttpServlet {
 
                     String originalMethodName = methodInfo.name().replaceFirst(".*/", "");
 
-                    // ignore super methods for init
                     if(originalMethodName.contains("init")){
                         continue;
                     }
@@ -127,7 +125,7 @@ public class OpenApiEndpoint extends HttpServlet {
 
                 }
 
-            }
+
         }
 
         String openApiJson = new Gson().toJson(openApi);
