@@ -43,54 +43,29 @@ public class OpenApiDocumentationService {
             String fullClassNameWithPackage = classInfo.name().toString();
 
 
-            ClassInfo info = idxView.getClassByName(fullClassNameWithPackage);
-
-
-            for (MethodInfo methodInfo : info.methods()) {
-                List<AnnotationInstance> annotations = info.annotations();
+            for (MethodInfo methodInfo : classInfo.methods()) {
+                List<AnnotationInstance> annotations = classInfo.annotations();
                 List<AnnotationInstance> webServletAnnotation = annotations.stream().filter(annotation -> annotation.name().toString().toLowerCase().contains("webservlet")).toList();
 
                 if(webServletAnnotation.isEmpty()){
                     break;
                 }
 
-                AnnotationValue annotationValue = webServletAnnotation.get(0).value("urlPatterns");
-                String path = extractFromAnnotationValue(annotationValue);
-
                 PathItemImpl pathItem = new PathItemImpl();
 
-                String originalMethodName = methodInfo.name().replaceFirst(".*/", "");
+                String methodName = methodInfo.name();
 
-                if(originalMethodName.contains("init")){
+                if(methodName.contains("init")){
                     continue;
                 }
 
-                openApi.getPaths().addPathItem(path + "/" + originalMethodName, pathItem);
+                openApi.getPaths().addPathItem(extractFromAnnotationValue(webServletAnnotation.get(0).value("urlPatterns")) + "/" + methodName, pathItem);
                 Operation operation = getOperationFromAnnotations(methodInfo, fullClassNameWithPackage);
 
-
-                Map<String, String> parameterAndAttributeCalls = CfrDecompilerUtils.getParameterAndAttributeCalls(fullClassNameWithPackage, methodInfo.name());
-
-                List<Parameter> parameters = new ArrayList<>();
-                if (parameterAndAttributeCalls != null) {
-                    parameterAndAttributeCalls.forEach((k, v) -> {
-                        if (k.contains("getParameter")) {
-                            OpenApiParameter param = new OpenApiParameter("string");
-                            String paramName = v.replace("getParameter", "").replace("\"", "").trim();
-                            if(!paramName.isEmpty()){
-                                param.setName(paramName);
-                                param.setIn(OpenApiParameter.In.QUERY);
-                                parameters.add(param);
-                            }
-
-                        }
-                    });
-                }
-
-                operation.setParameters(parameters);
+                operation.setParameters(getParameterList(CfrDecompilerUtils.getParameterAndAttributeCalls(fullClassNameWithPackage, methodInfo.name())));
                 operation.addTag(classInfo.simpleName());
 
-                switch (originalMethodName){
+                switch (methodName){
                     case "doGet":
                         pathItem.setGET(operation);
                         break;
@@ -128,6 +103,24 @@ public class OpenApiDocumentationService {
         return fixTypesInUppercase(new Gson().toJson(openApi));
     }
 
+    private List<Parameter> getParameterList(Map<String, String> parameterAndAttributeCalls){
+        List<Parameter> parameters = new ArrayList<>();
+        if (parameterAndAttributeCalls != null) {
+            parameterAndAttributeCalls.forEach((k, v) -> {
+                if (k.contains("getParameter")) {
+                    OpenApiParameter param = new OpenApiParameter("string");
+                    String paramName = v.replace("getParameter", "").replace("\"", "").trim();
+                    if(!paramName.isEmpty()){
+                        param.setName(paramName);
+                        param.setIn(OpenApiParameter.In.QUERY);
+                        parameters.add(param);
+                    }
+
+                }
+            });
+        }
+        return parameters;
+    }
     private String fixTypesInUppercase(String openApiJson){
         String[] typesInUppercase = new String[] { "QUERY", "BODY", "PATH", "HEADER", "FORMDATA"};
         for(String type : typesInUppercase){

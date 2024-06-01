@@ -1,6 +1,5 @@
 package jakarta.observability.openapi;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
