@@ -50,21 +50,22 @@ public class OpenApiDocumentationService {
 
 
             for (MethodInfo methodInfo : classInfo.methods()) {
-                List<AnnotationInstance> annotations = classInfo.annotations();
-                List<AnnotationInstance> webServletAnnotation = annotations.stream().filter(annotation -> annotation.name().toString().toLowerCase().contains("webservlet")).toList();
+
+                String methodName = methodInfo.name();
+                if(methodName.contains("init")){
+                    continue;
+                }
+
+                List<AnnotationInstance> webServletAnnotation = classInfo.annotations()
+                        .stream()
+                        .filter(annotation -> annotation.name().toString().toLowerCase().contains("webservlet"))
+                        .toList();
 
                 if(webServletAnnotation.isEmpty()){
                     break;
                 }
 
                 PathItemImpl pathItem = new PathItemImpl();
-
-                String methodName = methodInfo.name();
-
-                if(methodName.contains("init")){
-                    continue;
-                }
-
                 openApi.getPaths().addPathItem(extractFromAnnotationValue(webServletAnnotation.get(0).value("urlPatterns")) + "/" + methodName, pathItem);
                 Operation operation = getOperationFromAnnotations(methodInfo, fullClassNameWithPackage);
 
@@ -103,7 +104,7 @@ public class OpenApiDocumentationService {
             }
         }
 
-        return fixTypesInUppercase(gson.toJson(openApi));
+        return renameTypesToLowercase(gson.toJson(openApi));
     }
 
     private List<Parameter> getParameterList(Map<String, String> parameterAndAttributeCalls){
@@ -124,7 +125,7 @@ public class OpenApiDocumentationService {
         }
         return parameters;
     }
-    private String fixTypesInUppercase(String openApiJson){
+    private String renameTypesToLowercase(String openApiJson){
         String[] typesInUppercase = new String[] { "QUERY", "BODY", "PATH", "HEADER", "FORMDATA"};
         for(String type : typesInUppercase){
             openApiJson = openApiJson.replaceAll(type, type.toLowerCase());
