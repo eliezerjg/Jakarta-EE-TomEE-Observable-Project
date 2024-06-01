@@ -55,9 +55,13 @@ public class OpenApiEndpoint extends HttpServlet {
 
                 for (MethodInfo methodInfo : info.methods()) {
                     List<AnnotationInstance> annotations = info.annotations();
-                    AnnotationInstance webServletAnnotation = annotations.stream().filter(annotation -> annotation.name().toString().toLowerCase().contains("webservlet")).toList().get(0);
+                    List<AnnotationInstance> webServletAnnotation = annotations.stream().filter(annotation -> annotation.name().toString().toLowerCase().contains("webservlet")).toList();
 
-                    AnnotationValue annotationValue = webServletAnnotation.value("urlPatterns");
+                    if(webServletAnnotation.isEmpty()){
+                        break;
+                    }
+
+                    AnnotationValue annotationValue = webServletAnnotation.get(0).value("urlPatterns");
                     String path = extractFromAnnotationValue(annotationValue);
 
                     PathItemImpl pathItem = new PathItemImpl();

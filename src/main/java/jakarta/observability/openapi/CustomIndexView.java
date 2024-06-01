@@ -13,21 +13,24 @@ public class CustomIndexView implements IndexView {
     private IndexView delegate;
     private Index index;
 
-    public CustomIndexView(IndexView delegate) {
+    public CustomIndexView(IndexView delegate, String... packageNames) {
         this.delegate = delegate;
         Indexer indexer = new Indexer();
-        for (ClassInfo classInfo : delegate.getClassesInPackage(DotName.createSimple("jakarta.observability.servlets"))) {
-            try {
-                String classFileName = classInfo.name().toString().replace('.', '/') + ".class";
-                InputStream inputStream = getClass().getClassLoader().getResourceAsStream(classFileName);
-                if (inputStream != null) {
-                    indexer.index(inputStream);
-                    inputStream.close();
+        for(String packageName : packageNames){
+            for (ClassInfo classInfo : delegate.getClassesInPackage(DotName.createSimple(packageName))) {
+                try {
+                    String classFileName = classInfo.name().toString().replace('.', '/') + ".class";
+                    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(classFileName);
+                    if (inputStream != null) {
+                        indexer.index(inputStream);
+                        inputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
+
         this.index = indexer.complete();
     }
 
@@ -166,6 +169,6 @@ public class CustomIndexView implements IndexView {
                 indexer.index(clazz.getResourceAsStream("/" + clazz.getName().replace('.', '/') + ".class"));
             }
         }
-        return new CustomIndexView(indexer.complete());
+        return new CustomIndexView(indexer.complete(), packageNames);
     }
 }
