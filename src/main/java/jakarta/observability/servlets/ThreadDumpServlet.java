@@ -40,8 +40,8 @@ public class ThreadDumpServlet extends HttpServlet {
             }
     )
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.getParameter("parametro");
-        req.setAttribute("parametro_atributo", "valor_atributo");
+        req.getParameter("variavel_importante");
+        req.setAttribute("parametro_de_atributo_importante", "valor_atributo");
         setRespAsTextPlain(resp);
     }
 

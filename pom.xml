@@ -19,7 +19,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!-- DEPENDENCIAS DA NOSSA LIB -->
 
         <!-- https://mvnrepository.com/artifact/io.micrometer/micrometer-core -->
@@ -134,6 +133,8 @@
             <artifactId>cfr</artifactId>
             <version>0.152</version>
         </dependency>
+
+
 
     </dependencies>
 
