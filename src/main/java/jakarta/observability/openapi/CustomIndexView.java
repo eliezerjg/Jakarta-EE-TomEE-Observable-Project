@@ -162,7 +162,7 @@ public class CustomIndexView implements IndexView {
     }
 
 
-    public static CustomIndexView fromPackage(ClassLoader classLoader, String... packageNames) throws IOException {
+    public static CustomIndexView fromPackages(ClassLoader classLoader, String... packageNames) throws IOException {
         Indexer indexer = new Indexer();
         for(String packageName : packageNames){
             for (Class<?> clazz : getClassesInPackage(packageName, classLoader)) {

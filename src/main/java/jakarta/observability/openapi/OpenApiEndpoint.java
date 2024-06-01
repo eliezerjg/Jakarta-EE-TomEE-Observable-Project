@@ -29,7 +29,7 @@ public class OpenApiEndpoint extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String[] packages = new String[]{"jakarta.observability.servlets", "jakarta.observability.openapi"};
-        IndexView idxView = CustomIndexView.fromPackage(getClass().getClassLoader(), packages);
+        IndexView idxView = CustomIndexView.fromPackages(getClass().getClassLoader(), packages);
 
         SwaggerOpenAPImpl openApi = new SwaggerOpenAPImpl("2.0");
         openApi.setPaths(new PathsImpl());
