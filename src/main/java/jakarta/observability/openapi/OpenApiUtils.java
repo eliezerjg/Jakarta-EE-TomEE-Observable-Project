@@ -19,7 +19,7 @@ public class OpenApiUtils {
         return (annotationValue + "").replaceAll(".*\\[\"(.*?)\"\\].*", "$1");
     }
 
-    public static Operation getOperationFromAnnotations(MethodInfo methodInfo) {
+    public static Operation getOperationFromAnnotations(MethodInfo methodInfo, String fullClassNameWithPackage) {
         OperationImpl operation = new OperationImpl();
         List<AnnotationInstance> annotations = methodInfo.annotations();
 
@@ -81,25 +81,31 @@ public class OpenApiUtils {
                         List<AnnotationInstance> valuesFromAnnotation = Arrays.stream(content.asNestedArray()).toList();
                         AnnotationInstance valueFromParent = valuesFromAnnotation.get(0);
                         String schemaFromAnnotation = valueFromParent.value("schema").asString();
-                        if (content != null) {
-                            String jsonObject = null;
-                            if(schemaFromAnnotation.contains("implementation")) {
-                                String packageName = schemaFromAnnotation.split("=")[1].trim().replaceAll("\\ ", "").replaceAll("\\)", "");
+                        String jsonObject = null;
+                        if(schemaFromAnnotation.contains("implementation")) {
+                            String packageName = schemaFromAnnotation.split("=")[1].trim().replaceAll("\\ ", "").replaceAll("\\)", "");
 
-                                try {
-                                    Class<?> clazz = Class.forName(packageName);
-                                    Object instance = clazz.getDeclaredConstructor().newInstance();
-                                    jsonObject = new Gson().toJson(instance);
-                                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                                    System.out.println("Não foi possivel instanciar: " + e.getMessage());
-                                }
+                            try {
+                                Class<?> clazz = Class.forName(packageName);
+                                Object instance = clazz.getDeclaredConstructor().newInstance();
+                                jsonObject = new Gson().toJson(instance);
+                            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                                System.out.println("Não foi possivel instanciar: " + e.getMessage());
                             }
-
-                            jsonObject = jsonObject == null ? schemaFromAnnotation : jsonObject;
-
-                            apiResponse.setSchema("example", "method return Type: " + methodInfo.returnType() +  " ***  DTO FROM SCHEMA ANNOTATION *** -> " + jsonObject);
                         }
 
+                        jsonObject = jsonObject == null ? schemaFromAnnotation : jsonObject;
+
+
+                        Map<String, String> parameterAndAttributeCalls = CfrDecompilerUtils.getParameterAndAttributeCalls(fullClassNameWithPackage, methodInfo.name());
+                        List<String> attributeCalls = parameterAndAttributeCalls.values().stream().filter(n -> n.contains("setAttribute")).toList();
+                        StringBuilder templateParams= new StringBuilder();
+                        for(String attribute : attributeCalls){
+                            templateParams.append(" ").append(attribute.replace("setAttribute", "").replace("\"", "").replace("(", "").split(",")[0].trim());
+                        }
+
+                        String responseCodeBlock = templateParams.toString().isEmpty() ? "" : "Template params: ("+ templateParams + ")" +  " - method return Type: " + methodInfo.returnType() +  " ***  DTO FROM SCHEMA ANNOTATION *** -> " + jsonObject;
+                        apiResponse.setSchema("example", responseCodeBlock);
 
 
                         apiResponses.addAPIResponse(responseCode.asString(), apiResponse);
@@ -111,8 +117,16 @@ public class OpenApiUtils {
         }
 
         if(operation.getResponses() == null) {
+
+            Map<String, String> parameterAndAttributeCalls = CfrDecompilerUtils.getParameterAndAttributeCalls(fullClassNameWithPackage, methodInfo.name());
+            List<String> attributeCalls = parameterAndAttributeCalls.values().stream().filter(n -> n.contains("setAttribute")).toList();
+            StringBuilder templateParams= new StringBuilder();
+            for(String attribute : attributeCalls){
+                templateParams.append(" ").append(attribute.replace("setAttribute", "").replace("\"", "").split(",")[0].trim());
+            }
+
             APIResponse apiResponse = new APIResponseImpl();
-            apiResponse.setDescription("Não documentado");
+            apiResponse.setDescription("Não documentado. " + (attributeCalls.size() > 0 ? "template params: " + templateParams.toString() : ""));
             operation.setResponses(new APIResponsesImpl().addAPIResponse("200", apiResponse) );
         }
 

@@ -71,7 +71,7 @@ public class OpenApiEndpoint extends HttpServlet {
                     }
 
                     openApi.getPaths().addPathItem(path + "/" + originalMethodName, pathItem);
-                    Operation operation = getOperationFromAnnotations(methodInfo);
+                    Operation operation = getOperationFromAnnotations(methodInfo, fullClassNameWithPackage);
 
 
                     Map<String, String> parameterAndAttributeCalls = CfrDecompilerUtils.getParameterAndAttributeCalls(fullClassNameWithPackage, methodInfo.name());
@@ -82,9 +82,12 @@ public class OpenApiEndpoint extends HttpServlet {
                             if (k.contains("getParameter")) {
                                 OpenApiParameter param = new OpenApiParameter("string");
                                 String paramName = v.replace("getParameter", "").replace("\"", "").trim();
-                                param.setName(paramName);
-                                param.setIn(OpenApiParameter.In.QUERY);
-                                parameters.add(param);
+                                if(!paramName.isEmpty()){
+                                    param.setName(paramName);
+                                    param.setIn(OpenApiParameter.In.QUERY);
+                                    parameters.add(param);
+                                }
+
                             }
                         });
                     }

@@ -32,6 +32,7 @@ public class ExceptionHandlerServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        String id = req.getParameter("id");
         super.doDelete(req, resp);
     }
 
