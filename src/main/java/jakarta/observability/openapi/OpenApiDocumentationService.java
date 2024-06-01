@@ -21,6 +21,12 @@ import static jakarta.observability.openapi.OpenApiUtils.getOperationFromAnnotat
 
 public class OpenApiDocumentationService {
 
+    private static final Gson gson;
+
+    static {
+        gson = new Gson();
+    }
+
     public String generateDocumentation(String... packageNames) throws IOException {
         IndexView idxView = CustomIndexView.fromPackages(getClass().getClassLoader(), packageNames);
 
@@ -94,13 +100,10 @@ public class OpenApiDocumentationService {
                         pathItem.setGET(operation);
                         break;
                 }
-
             }
-
-
         }
 
-        return fixTypesInUppercase(new Gson().toJson(openApi));
+        return fixTypesInUppercase(gson.toJson(openApi));
     }
 
     private List<Parameter> getParameterList(Map<String, String> parameterAndAttributeCalls){
