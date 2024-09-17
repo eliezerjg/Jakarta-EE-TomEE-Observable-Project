@@ -22,7 +22,7 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 
 
 # Java Melody - Follow, Track and Measure Http and Java Memory Life Cycle
-+ Go to http://localhost:8080/monitoring
++ Go to http://localhost:8080/monitoring (admin:admin)
 
 # Open API Implementation for Jakarta EE WebServlets
 + In progress implementation for Jakarta EE, see in http://localhost:8080/openapi
