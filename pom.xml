@@ -162,6 +162,14 @@
         <!-- OPEN API PARA WEB SERVLET -->
 
 
+        <!-- javamelody-core for Jakarta EE such as Tomcat 10 -->
+        <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
+            <version>2.2.0</version>
+        </dependency>
+
+
 
     </dependencies>
 

@@ -1,6 +1,27 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+
+
+    <filter>
+        <filter-name>javamelody</filter-name>
+        <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>authorized-users</param-name>
+            <param-value>admin:admin</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>javamelody</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
+    </filter-mapping>
+    <listener>
+        <listener-class>net.bull.javamelody.SessionListener</listener-class>
+    </listener>
+
     <error-page>
         <exception-type>java.lang.Exception</exception-type>
         <location>/exceptionHandlerServlet</location>

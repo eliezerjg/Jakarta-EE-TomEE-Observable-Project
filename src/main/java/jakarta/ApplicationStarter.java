@@ -1,6 +1,7 @@
 package jakarta;
 
 import jakarta.annotation.PostConstruct;
+import org.apache.catalina.Server;
 import org.apache.openejb.testing.Application;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testng.PropertiesBuilder;
