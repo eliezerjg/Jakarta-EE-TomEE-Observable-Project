@@ -83,10 +83,9 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 
 ## Setup Instructions
 
-1. Clone the repository: `git clone https://github.com/eliezerjg/Jakarta-EE-Tomcat-10-Observable-Project.git`.
+1. Clone the repository
 2. Open the project in your preferred IDE.
-3. Configure Tomcat 10 in your IDE and set it as the deployment target.
-4. Build and run the project.
+3. Run the Application Bootstrap.
 
 ## Observability Configuration
 
