@@ -79,6 +79,7 @@ system for Prometheus / Grafana Observability System, use Grafana in Jakarta EE 
 - `src/main/java`: Java source files for servlets and other backend logic.
 - `src/main/webapp`: JSP pages and web-related resources.
 - `src/test`: Test classes and resources.
+- `src/main/resources/org.apache.tomee.configs`: Tomcat / TomEE Web Server Configs.
 
 ## Setup Instructions
 
